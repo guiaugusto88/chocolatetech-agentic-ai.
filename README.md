@@ -1,49 +1,54 @@
 # Agente de IA Agêntica para Gestão de RH - Chocolatetech
 
-Este repositório contém o desenvolvimento de um ecossistema de Inteligência Artificial Agêntica criado durante a **Imersão Agentes de IA (Alura + Oracle)**. O objetivo do projeto é construir um assistente inteligente autônomo para triagem, consulta de políticas internas de RH e gestão de dados de funcionários da empresa fictícia Chocolatetech.
+Este repositório contém o desenvolvimento de um ecossistema de Inteligência Artificial Agêntica completo, criado durante a **Imersão Agentes de IA (Alura + Oracle)**. O objective do projeto é construir um assistente inteligente autônomo para triagem, consulta de políticas internas de RH e gerenciamento de dados de colaboradores da empresa fictícia Chocolatetech, operando em tempo real integrado ao Telegram.
 
-## 🚀 Status do Projeto: Em Desenvolvimento (Aula 2/3 concluída)
+## 🚀 Status do Projeto: Concluído ✨
 
 ---
 
 ## 🛠️ Tecnologias e Ferramentas Utilizadas
 
 * **n8n:** Orquestração de fluxos de automação e conexão de nós de IA.
-* **MySQL:** Banco de dados relacional utilizado para persistência e gerenciamento das informações estruturadas dos funcionários.
+* **Telegram API:** Interface de usuário e canal de produção para interação direta com o agente.
+* **MySQL:** Banco de dados relacional para persistência e gerenciamento das informações estruturadas dos funcionários.
 * **Cohere:** Modelos de LLM para processamento de linguagem natural (*Cohere Chat Model*) e geração de vetores (*Cohere Embeddings*).
-* **Vector Store:** Armazenamento vetorial dos dados não-estruturados para busca eficiente.
-* **HTTP/API:** Requisições para consumo de dados brutos (*raw documents*).
+* **Vector Store:** Armazenamento vetorial de dados não-estruturados para a arquitetura RAG.
+* **HTTP/API:** Requisições para consumo de documentos corporativos brutos.
 
 ---
 
-## 🏗️ Arquitetura do Sistema (O que foi implementado)
+## 🏗️ Arquitetura do Sistema (Ecossistema Completo)
 
-O ecossistema no n8n foi expandido e agora opera unindo dados não-estruturados (documentos) e dados estruturados (banco de dados):
+O ecossistema final foi implantado com sucesso, unindo o processamento de dados não-estruturados, consultas relacionais e disponibilização para o usuário final:
 
-### 1. Pipeline de Ingestão de Dados (ETL Vetorial)
-* Criação de um fluxo automático que realiza uma requisição HTTP para buscar documentos e manuais de políticas de RH brutos no GitHub.
-* Tratamento dos dados com um *Data Loader* e conversão do texto em representações numéricas utilizando o modelo de *Embeddings* da Cohere.
-* Armazenamento e indexação das informações em um banco de dados vetorial (*Simple Vector Store*).
+### 1. Ingestão e Processamento (ETL Vetorial)
+* Fluxo automatizado via requisições HTTP para ler manuais brutos de RH.
+* Divisão e conversão de texto em vetores numéricos através do modelo de *Embeddings* da Cohere, indexados no *Simple Vector Store*.
 
-* <img width="912" height="685" alt="Captura de tela 2026-06-15 232400" src="https://github.com/user-attachments/assets/e1718b55-dd3a-4892-acd1-f2e6eaee03c1" />
+### 2. Camada Relacional (MySQL)
+* Banco de dados estruturado com a tabela `funcionarios` populada, permitindo buscas dinâmicas de dados sensíveis (cargo, saldo de férias, banco de horas, etc.).
+* Conexão direta ao agente central como uma ferramenta analítica automatizada.
 
-### 2. Integração com Banco de Dados Relacional (MySQL)
-* Modelagem e população da tabela `funcionarios` contendo registros de ID, nome, e-mail, departamento, cargo, data de admissão, saldo de férias, banco de horas e regime de trabalho.
-* Conexão do banco de dados ao **AI Agent** através de uma Tool customizada de seleção de linhas (`Select rows from a table in MySQL`).
+### 3. Disponibilização em Produção (Telegram Bot)
+* Integração de um nó de Webhook configurado com a API do Telegram (`Telegram Trigger`) para escutar os comandos enviados pelos usuários.
+* O **AI Agent** orquestra o fluxo de ponta a ponta: recebe a mensagem, retém o histórico na **Simple Memory** e escolhe autonomamente se vai consultar os manuais (RAG) ou buscar as linhas da tabela no **MySQL** para responder através do nó de envio de mensagens do Telegram.
 
-* <img width="1204" height="698" alt="Captura de tela 2026-06-16 224655" src="https://github.com/user-attachments/assets/21fc48b4-7d0c-49dc-81ff-d07ac6693060" />
-
-### 3. Fluxo do Agente Inteligente Multiferramentas (Multi-Tool Agent)
-* Configuração do componente principal de **IA Agêntica (AI Agent)** integrado ao modelo de chat da Cohere e à **Memória de Conversação (Simple Memory)**.
-* O agente agora é capaz de decidir autonomamente qual ferramenta usar de acordo com a dúvida do usuário:
-  * Se o usuário pergunta sobre uma **política ou regra da empresa**, o agente usa a ferramenta do *Vector Store* (RAG).
-  * Se o usuário pergunta sobre o **saldo de férias, cargo ou dados de um colaborador específico**, o agente consulta diretamente o banco de dados *MySQL*.
- 
-  * <img width="1036" height="626" alt="Captura de tela 2026-06-16 230624" src="https://github.com/user-attachments/assets/83688c8a-e6e6-4ef3-b195-b02065903e7d" />
+* <img width="1064" height="605" alt="Captura de tela 2026-06-18 075105" src="https://github.com/user-attachments/assets/fcaabf6f-e94c-4b99-b962-04345b9c4c93" />
 
 ---
 
-## 📅 Próximos Passos
+## 📱 Demonstração Prática (Produção)
 
-* [x] Integração do fluxo com um banco de dados relacional para consulta e manipulação de informações cadastrais dos funcionários em tempo real (Aula 2).
-* [ ] Refinamento das tomadas de decisão autônomas do agente baseado em permissões, automações completas e regras de negócio.
+O agente foi validado com sucesso simulando um cenário corporativo. No teste abaixo, o usuário interage diretamente pelo aplicativo do Telegram com o assistente, que aciona o raciocínio lógico e a arquitetura RAG para retornar diretrizes sobre políticas internas e banco de horas sem alucinar:
+
+<img width="1064" height="605" alt="Captura de tela 2026-06-18 075105" src="https://github.com/user-attachments/assets/424ea4b3-51c5-4373-9fbd-5820e429ff06" />
+
+---
+
+## 🏁 Entrega Final e Certificação
+
+<img width="879" height="613" alt="Captura de tela 2026-06-17 233749" src="https://github.com/user-attachments/assets/9b72e398-0609-4579-9a6c-60bc75b6f2d9" />
+
+* [x] Ingestão de dados e arquitetura básica de RAG (Aula 1).
+* [x] Integração com banco de dados MySQL para consultas estruturadas (Aula 2).
+* [x] Configuração de Webhook e Deploy completo do bot integrado à API do Telegram (Aula 3).
